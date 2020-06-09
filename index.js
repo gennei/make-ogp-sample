@@ -1,20 +1,8 @@
-const path = require('path');
-const fs = require('fs');
-const puppeteer = require('puppeteer');
-const headless = false;
-const slowMo = 10;
-const width = 1280, height = 800;
-const args = [
-  '--start-fullscreen',
-  '--disable-infobars',
-  '--incognito',
-];
+const puppeteer = require("puppeteer");
 
-const filename = 'tmp.html'
-
-const img1 = 'https://m.media-amazon.com/images/I/41ncKIL-yRL.jpg';
-const img2 = 'https://m.media-amazon.com/images/I/51qWOy7aplL.jpg';
-const img3 = 'https://m.media-amazon.com/images/I/51AxOZRGdrL.jpg';
+const img1 = "https://m.media-amazon.com/images/I/41ncKIL-yRL.jpg";
+const img2 = "https://m.media-amazon.com/images/I/51qWOy7aplL.jpg";
+const img3 = "https://m.media-amazon.com/images/I/51AxOZRGdrL.jpg";
 
 const html = `
 <body>
@@ -29,16 +17,11 @@ const html = `
 </body>
 `;
 
-fs.writeFile(filename, html, (err) => {
-  if (err) throw err;
-});
-
 (async () => {
   const browser = await puppeteer.launch({ headless: false });
-  const page = (await browser.pages())[0];
-  await page.setViewport({ width, height });
-  await page.goto(`file:${path.join(__dirname, filename)}`);
-  let foo = await page.$('#img');
-  await foo.screenshot({ path: 'screenshot.png' });
+  const page = await browser.newPage();
+  await page.setContent(html);
+  let foo = await page.$("#img");
+  await foo.screenshot({ path: "screenshot.png" });
   await browser.close();
 })();
