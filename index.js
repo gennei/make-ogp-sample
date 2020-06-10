@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+const chromium = require("chrome-aws-lambda");
 
 const img1 = "https://m.media-amazon.com/images/I/41ncKIL-yRL.jpg";
 const img2 = "https://m.media-amazon.com/images/I/51qWOy7aplL.jpg";
@@ -18,10 +18,18 @@ const html = `
 `;
 
 (async () => {
-  const browser = await puppeteer.launch({ headless: false });
-  const page = await browser.newPage();
+  const browser = await chromium.puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
+    ignoreHTTPSErrors: true,
+  });
+
+  let page = await browser.newPage();
   await page.setContent(html);
-  let foo = await page.$("#img");
-  await foo.screenshot({ path: "screenshot.png" });
+  const img_content = await page.$("#img");
+  const screenshot = await img_content.screenshot();
   await browser.close();
+  console.log("screenshot done");
 })();
